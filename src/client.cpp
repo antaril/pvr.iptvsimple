@@ -22,12 +22,16 @@
  *
  */
 
+
 #include "client.h"
 #include "xbmc_pvr_dll.h"
 #include "PVRIptvData.h"
 #include "p8-platform/util/util.h"
 
 using namespace ADDON;
+
+#include "PVRRecorder.h"
+
 
 #ifdef TARGET_WINDOWS
 #define snprintf _snprintf
@@ -42,6 +46,8 @@ using namespace ADDON;
 bool           m_bCreated       = false;
 ADDON_STATUS   m_CurStatus      = ADDON_STATUS_UNKNOWN;
 PVRIptvData   *m_data           = NULL;
+PVRRecorder   *m_recorder   = NULL;
+bool           m_bIsPlaying     = false;
 PVRIptvChannel m_currentChannel;
 
 /* User adjustable settings are saved here.
@@ -63,6 +69,13 @@ bool        g_bTSOverride   = true;
 bool        g_bCacheM3U     = false;
 bool        g_bCacheEPG     = false;
 int         g_iEPGLogos     = 0;
+std::string g_recordingsPath   = "";
+std::string g_ffmpegPath   = "";
+std::string g_ffmpegParams   = "";
+std::string g_rtmpdumpPath   = "";
+std::string g_fileExtension = "";
+int         g_streamTimeout = 60;
+int         g_streamQuality = 1;
 
 extern std::string PathCombine(const std::string &strPath, const std::string &strFileName)
 {
@@ -168,6 +181,38 @@ void ADDON_ReadSettings(void)
   // Logos from EPG
   if (!XBMC->GetSetting("logoFromEpg", &g_iEPGLogos))
     g_iEPGLogos = 0;
+  
+  if (XBMC->GetSetting("recordingsPath", &buffer)) {
+    g_recordingsPath = buffer;
+  }
+  
+  if (XBMC->GetSetting("ffmpegPath", &buffer)) {
+    g_ffmpegPath = buffer;
+  }
+  
+  if (XBMC->GetSetting("ffmpegParams", &buffer)) {
+    g_ffmpegParams = buffer;
+  }
+  
+  if (XBMC->GetSetting("rtmpdumpPath", &buffer)) {
+    g_rtmpdumpPath = buffer;
+  }
+  
+  if (XBMC->GetSetting("fileExtension", &buffer)) {
+    g_fileExtension = buffer;
+  }
+  
+  int streamTimeout;
+  if (XBMC->GetSetting("streamTimeout", &streamTimeout))
+  {
+    g_streamTimeout = streamTimeout;
+  }
+  
+  int streamQuality;
+  if (XBMC->GetSetting("streamQuality", &streamQuality))
+  {
+    g_streamQuality = streamQuality;
+  }
 }
 
 ADDON_STATUS ADDON_Create(void* hdl, void* props)
@@ -208,6 +253,7 @@ ADDON_STATUS ADDON_Create(void* hdl, void* props)
   ADDON_ReadSettings();
 
   m_data = new PVRIptvData;
+  m_recorder = new PVRRecorder();
   m_CurStatus = ADDON_STATUS_OK;
   m_bCreated = true;
 
@@ -275,6 +321,9 @@ PVR_ERROR GetAddonCapabilities(PVR_ADDON_CAPABILITIES* pCapabilities)
   pCapabilities->bSupportsRecordingsRename = false;
   pCapabilities->bSupportsRecordingsLifetimeChange = false;
   pCapabilities->bSupportsDescrambleInfo = false;
+  pCapabilities->bSupportsRecordings      = true;
+  pCapabilities->bSupportsTimers          = true;
+
 
   return PVR_ERROR_NO_ERROR;
 }
@@ -395,6 +444,32 @@ PVR_ERROR SignalStatus(PVR_SIGNAL_STATUS &signalStatus)
   return PVR_ERROR_NO_ERROR;
 }
 
+PVR_ERROR AddTimer(const PVR_TIMER &timer)
+{
+  return m_recorder->AddTimer (timer);
+}
+
+PVR_ERROR DeleteTimer(const PVR_TIMER &timer, bool bForceDelete)
+{
+  return m_recorder->DeleteTimer (timer,bForceDelete);
+}
+
+PVR_ERROR UpdateTimer(const PVR_TIMER &timer)
+{
+  return m_recorder->UpdateTimer (timer);
+}
+
+PVR_ERROR GetTimers(ADDON_HANDLE handle)
+{
+  return m_recorder->GetTimers(handle);
+}
+
+int GetTimersAmount(void)
+{
+  int job = m_recorder->GetTimersAmount();
+  return job; 
+}
+
 /** UNUSED API FUNCTIONS */
 bool CanPauseStream(void) { return false; }
 int GetRecordingsAmount(bool deleted) { return -1; }
@@ -425,11 +500,6 @@ PVR_ERROR SetRecordingLastPlayedPosition(const PVR_RECORDING &recording, int las
 int GetRecordingLastPlayedPosition(const PVR_RECORDING &recording) { return -1; }
 PVR_ERROR GetRecordingEdl(const PVR_RECORDING&, PVR_EDL_ENTRY[], int*) { return PVR_ERROR_NOT_IMPLEMENTED; };
 PVR_ERROR GetTimerTypes(PVR_TIMER_TYPE types[], int *size) { return PVR_ERROR_NOT_IMPLEMENTED; }
-int GetTimersAmount(void) { return -1; }
-PVR_ERROR GetTimers(ADDON_HANDLE handle) { return PVR_ERROR_NOT_IMPLEMENTED; }
-PVR_ERROR AddTimer(const PVR_TIMER &timer) { return PVR_ERROR_NOT_IMPLEMENTED; }
-PVR_ERROR DeleteTimer(const PVR_TIMER &timer, bool bForceDelete) { return PVR_ERROR_NOT_IMPLEMENTED; }
-PVR_ERROR UpdateTimer(const PVR_TIMER &timer) { return PVR_ERROR_NOT_IMPLEMENTED; }
 void DemuxAbort(void) {}
 DemuxPacket* DemuxRead(void) { return NULL; }
 bool IsTimeshifting(void) { return false; }
