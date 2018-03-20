@@ -1,3 +1,6 @@
+v3.4.1.1
+-Add recording support (experimental)
+
 v3.4.1
 - Add support for KODIPROP in M3U (for inputstream.adaptive)
 
