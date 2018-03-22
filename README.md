@@ -7,6 +7,13 @@ IPTV Live TV and Radio PVR client addon for [Kodi](http://kodi.tv)
 
 ## Build instructions
 
+1. git clone https://github.com/LibreELEC/LibreELEC.tv.git
+2. cd LibreELEC.tv
+3. Edit: packages/mediacenter/kodi-binary-addons/pvr.iptvsimple/package.mk
+4. PKG_VERSION="f61da8c" and PKG_SHA256="1dbaf9cfb69bdbb98aa813f8a7ce7745a21baac08d50d1897fc89ae2913e6268" and PKG_URL="https://github.com/antaril/pvr.iptvsimple/archive/$PKG_VERSION.tar.gz"
+5. build add with: PROJECT=Amlogic DEVICE=S905 ARCH=arm ./scripts/create_addon pvr.iptvsimple -j 6
+
+
 ### Linux
 
 1. `git clone https://github.com/xbmc/xbmc.git`
@@ -21,8 +28,7 @@ IPTV Live TV and Radio PVR client addon for [Kodi](http://kodi.tv)
 * [Kodi's PVR user support](http://forum.kodi.tv/forumdisplay.php?fid=167)
 * [Kodi's PVR development support](http://forum.kodi.tv/forumdisplay.php?fid=136)
 
-* [Kodi's PVR user support] (http://forum.kodi.tv/forumdisplay.php?fid=167)
-* [Kodi's PVR development support] (http://forum.kodi.tv/forumdisplay.php?fid=136)
+
 
 ## Radek Kubera (rkubera) modification
 ##### Features

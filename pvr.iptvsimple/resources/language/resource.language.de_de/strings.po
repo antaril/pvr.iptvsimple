@@ -103,3 +103,44 @@ msgstr "M3U bevorzugen"
 msgctxt "#30044"
 msgid "Prefer XMLTV"
 msgstr "XMLTV bevorzugen"
+
+
+msgctxt "#30100"
+msgid "Aufnahme Einstellungen"
+msgstr ""
+
+msgctxt "#30101"
+msgid "Speicherort"
+msgstr ""
+
+msgctxt "#30102"
+msgid "Ordner für rtmpdump binary"
+msgstr ""
+
+msgctxt "#30103"
+msgid "Ordner für ffmpg binary"
+msgstr ""
+
+msgctxt "#30104"
+msgid "Recompressionsparameter für avconv"
+msgstr ""
+
+msgctxt "#30105"
+msgid "Video Container"
+msgstr ""
+
+msgctxt "#30106"
+msgid "Input stream quality"
+msgstr ""
+
+msgctxt "#30107"
+msgid "schlecht"
+msgstr ""
+
+msgctxt "#30108"
+msgid "gut"
+msgstr ""
+
+msgctxt "#30109"
+msgid "Stream timeout (sec)"
+msgstr ""
