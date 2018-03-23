@@ -67,7 +67,7 @@ void *PVRSchedulerThread::Process(void)
     XBMC->Log(LOG_NOTICE,"Starting scheduler thread");
     isWorking = true;
     while (true) {
-       sleep(1000);
+       sleep(100);
         if (b_stop==true)
         {
             isWorking = false;
