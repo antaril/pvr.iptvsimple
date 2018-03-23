@@ -10,7 +10,7 @@ IPTV Live TV and Radio PVR client addon for [Kodi](http://kodi.tv)
 ### Linux
 
 1. `git clone https://github.com/xbmc/xbmc.git`
-2. `git clone https://github.com/kodi-pvr/pvr.iptvsimple.git`
+2. `git clone https://github.com/antaril/pvr.iptvsimple.git`
 3. `cd pvr.iptvsimple && mkdir build && cd build`
 4. `cmake -DADDONS_TO_BUILD=pvr.iptvsimple -DADDON_SRC_PREFIX=../.. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=../../xbmc/addons -DPACKAGE_ZIP=1 ../../xbmc/cmake/addons`
 5. `make`
@@ -21,9 +21,6 @@ IPTV Live TV and Radio PVR client addon for [Kodi](http://kodi.tv)
 * [Kodi's PVR user support](http://forum.kodi.tv/forumdisplay.php?fid=167)
 * [Kodi's PVR development support](http://forum.kodi.tv/forumdisplay.php?fid=136)
 
-* [Kodi's PVR user support] (http://forum.kodi.tv/forumdisplay.php?fid=167)
-* [Kodi's PVR development support] (http://forum.kodi.tv/forumdisplay.php?fid=136)
-
 ## Radek Kubera (rkubera) modification
 ##### Features
 1. Mutlitask recording
@@ -31,11 +28,12 @@ IPTV Live TV and Radio PVR client addon for [Kodi](http://kodi.tv)
 3. EPG recording support
 
 ##### Requirements
-1. avconv binary
+1. ffmpeg binary
 2. rtmpdump binary
 
 ##### Tested with
 1. OSX Sierra
 2. Raspberry pi 2 (OSMC - debian)
 3. Ubuntu 16.10
+4. LibreELEC s905x build
 
