@@ -1,6 +1,6 @@
 /*
- *      Copyright (C) 2015 Radek Kubera
- *      http://github.com/afedchin/xbmc-addon-iptvsimple/
+ *      Copyright (C) 2018 primaeval
+ *      https://github.com/primaeval/pvr.iptvsimple
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-
+ 
+#include "kodi/libXBMC_addon.h"
+#include "kodi/libXBMC_pvr.h"
 #include "p8-platform/util/StringUtils.h"
 #include <map>
 #include "p8-platform/threads/threads.h"
@@ -33,7 +35,14 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+
+#ifdef _WIN32
+#include <io.h>
+#include <windows.h>
+#define sleep Sleep
+#else
 #include <unistd.h>
+#endif
 
 using namespace ADDON;
 
@@ -42,7 +51,7 @@ extern PVRSchedulerThread *p_Scheduler;
 extern string g_recordingsPath;
 extern string g_ffmpegPath;
 extern string g_ffmpegParams;
-extern string g_rtmpdumpPath;
+//extern string g_rtmpdumpPath;
 extern string g_fileExtension;
 extern int g_streamTimeout;
 
@@ -189,10 +198,12 @@ void *PVRRecorderThread::Process(void)
     t_duration = duration;
     
     double length = 0;
-    
-   // int rtmpStream = 0;
+
+    //TODO: handle special url protocols for ffmpeg (| and rtmp)
+
+    //int rtmpStream = 0;
     /*
-      if(strStreamUrl.substr(0, 7) == "rtmp://"
+    if(strStreamUrl.substr(0, 7) == "rtmp://"
        || strStreamUrl.substr(0, 8) == "rtmpt://"
        || strStreamUrl.substr(0, 8) == "rtmpe://"
        || strStreamUrl.substr(0, 9) == "rtmpte://"
@@ -200,9 +211,9 @@ void *PVRRecorderThread::Process(void)
     {
 	rtmpStream = 1;
     }
-*/    
-strParams = strStreamUrl;
-/*
+    */
+    strParams = strStreamUrl;
+    /*
     vector<string> stremaUrlVect = StringUtils::Split (strStreamUrl," ");
     if (stremaUrlVect.size()>0) {
 	strParams = stremaUrlVect[0];
@@ -214,7 +225,6 @@ strParams = strStreamUrl;
 		    strParams = strParams + " --live";
 		}
 		else {
-
 		    if (rtmpStream==1) {
 			if (lineVect.size()>1) {
 			    strParams = strParams + " --"+lineVect[0]+"=\""+lineVect[1]+"\"";
@@ -230,9 +240,8 @@ strParams = strStreamUrl;
 	    }
         }
     }
-    
-*/
-/*
+    */
+    /*
     if(rtmpStream==1)
     {
 	strParams = " -r "+strParams;
@@ -251,9 +260,9 @@ strParams = strStreamUrl;
 	XBMC->Log(LOG_NOTICE,"Starting rtmpdump: %s", strCommandLog.c_str());
     }
     else
-*/
+    */
     {
-	strParams =  " -i \""+strParams+"\" "+g_ffmpegParams+" -f "+g_fileExtension+" -";
+	strParams =  " -i \""+strParams+"\" "+g_ffmpegParams+" \""+videoFile.c_str()+"\"";
 	if (g_ffmpegPath.length()==0)
 	{
 	    XBMC->Log(LOG_ERROR,"Path to ffmpeg binary is not set. Please change addon configuration.");
@@ -285,17 +294,20 @@ strParams = strStreamUrl;
     es.start( strCommand , strParams);
 
     XBMC->Log(LOG_NOTICE,"Set stream timeout: %d",g_streamTimeout);
-    void *fileHandle;
-    fileHandle = XBMC->OpenFileForWrite(videoFile.c_str(), true);
-    
-    string buffer;
+    //void *fileHandle;
+    //fileHandle = XBMC->OpenFileForWrite(videoFile.c_str(), true);
+    XBMC->Log(LOG_NOTICE,"videoFile: %s",videoFile.c_str());
+    PVR->TriggerRecordingUpdate();
+    //string buffer;
     //int bytes_read;
-    streamsize bytes_read;
-    bool startTransmission = false;
-    bool firstKilobyteReaded = false;
-    time_t last_readed = time(NULL);
+    //streamsize bytes_read;
+    //bool startTransmission = false;
+    //bool firstKilobyteReaded = false;
+    //time_t last_readed = time(NULL);
     while(true)
-    {
+    {	
+	sleep(1000);
+	/*
 	string buff;
 	try {
 	    getline( es.out(bytes_read), buff,'\n' ).good();
@@ -355,10 +367,13 @@ strParams = strStreamUrl;
 	}catch( std::exception const & e ) {
 	    //nothing to read
 	}
+	*/
 	
 	p_RecJob->getJobEntry(t_iClientIndex, entry);
 	
 	now = time(NULL);
+	//TODO: restart if no data
+	/*
 	if (now-last_readed>=g_streamTimeout)
 	{
 	    //something wrong - data not growing
@@ -385,6 +400,7 @@ strParams = strStreamUrl;
             return NULL;
 	    
 	}
+	*/
         if (entry.Timer.endTime<time(NULL) || entry.Status==PVR_STREAM_IS_STOPPING || entry.Status==PVR_STREAM_STOPPED)
         {
 	    es.close();
@@ -392,7 +408,7 @@ strParams = strStreamUrl;
             //XBMC->CloseFile(fileHandle);
                             
             XBMC->Log(LOG_NOTICE, "Recording stopped %s", entry.Timer.strTitle);
-                   
+            /*       
             //Correct duration time
 	    if (length>0)
 	    {
@@ -403,6 +419,7 @@ strParams = strStreamUrl;
 	    {
 		//XBMC->DeleteFile(videoFile.c_str());
 	    }
+	    */
             entry.Status = PVR_STREAM_STOPPED;
             entry.Timer.state= PVR_TIMER_STATE_COMPLETED;
             p_RecJob->updateJobEntry(entry);
@@ -413,23 +430,25 @@ strParams = strStreamUrl;
     es.close();
     es.kill();
     //XBMC->CloseFile(fileHandle);
+    /*
     time_t end_time = time(NULL);
     //Correct duration time
     if (length>0)
     {
 	double duration = end_time-t_startRecTime;
-	CorrectDurationFLVFile (videoFile,duration);
+	//CorrectDurationFLVFile (videoFile,duration);
     }
     else
     {
 	//File is empty
 	//XBMC->DeleteFile(videoFile.c_str());
     }
+    */
     entry.Status = PVR_STREAM_STOPPED;
     entry.Timer.state= PVR_TIMER_STATE_COMPLETED;
     p_RecJob->updateJobEntry(entry);
     s_triggerTimerUpdate = true;
-
+    PVR->TriggerRecordingUpdate();
     return NULL;
 	
 }
