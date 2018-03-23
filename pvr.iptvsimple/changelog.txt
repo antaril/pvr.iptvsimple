@@ -1,3 +1,6 @@
+v3.4.3
+-Set new record options and other stuff
+
 v3.4.1.1
 -Add recording support (experimental)
 
