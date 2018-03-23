@@ -1,3 +1,6 @@
+v3.4.7
+-fix 100% cpu bug and other little things
+
 v3.4.6
 -try try try
 
