@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon
   id="pvr.iptvsimple"
-  version="3.4.5"
+  version="3.4.6"
   name="PVR IPTV Simple Client"
   provider-name="Antaril">
   <requires>@ADDON_DEPENDS@</requires>
