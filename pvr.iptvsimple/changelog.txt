@@ -1,3 +1,6 @@
+v3.4.5
+- next try to fix recording 
+
 v3.4.4
 - another record fix. back to old config
 
