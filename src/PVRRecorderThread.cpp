@@ -190,8 +190,9 @@ void *PVRRecorderThread::Process(void)
     
     double length = 0;
     
-    int rtmpStream = 0;
-    if(strStreamUrl.substr(0, 7) == "rtmp://"
+   // int rtmpStream = 0;
+    /*
+      if(strStreamUrl.substr(0, 7) == "rtmp://"
        || strStreamUrl.substr(0, 8) == "rtmpt://"
        || strStreamUrl.substr(0, 8) == "rtmpe://"
        || strStreamUrl.substr(0, 9) == "rtmpte://"
@@ -199,7 +200,9 @@ void *PVRRecorderThread::Process(void)
     {
 	rtmpStream = 1;
     }
-    
+*/    
+strParams = strStreamUrl;
+/*
     vector<string> stremaUrlVect = StringUtils::Split (strStreamUrl," ");
     if (stremaUrlVect.size()>0) {
 	strParams = stremaUrlVect[0];
@@ -211,6 +214,7 @@ void *PVRRecorderThread::Process(void)
 		    strParams = strParams + " --live";
 		}
 		else {
+
 		    if (rtmpStream==1) {
 			if (lineVect.size()>1) {
 			    strParams = strParams + " --"+lineVect[0]+"=\""+lineVect[1]+"\"";
@@ -227,6 +231,8 @@ void *PVRRecorderThread::Process(void)
         }
     }
     
+*/
+/*
     if(rtmpStream==1)
     {
 	strParams = " -r "+strParams;
@@ -245,6 +251,7 @@ void *PVRRecorderThread::Process(void)
 	XBMC->Log(LOG_NOTICE,"Starting rtmpdump: %s", strCommandLog.c_str());
     }
     else
+*/
     {
 	strParams =  " -i \""+strParams+"\" "+g_ffmpegParams+" -f "+g_fileExtension+" -";
 	if (g_ffmpegPath.length()==0)
