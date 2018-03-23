@@ -1,3 +1,6 @@
+v3.4.4
+- another record fix. back to old config
+
 v3.4.3
 -Set new record options and other stuff
 
