@@ -1,3 +1,6 @@
+v3.4.8
+- delete sleep and make folders choosable
+
 v3.4.7
 -fix 100% cpu bug and other little things
 
