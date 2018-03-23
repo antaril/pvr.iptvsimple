@@ -246,7 +246,7 @@ void *PVRRecorderThread::Process(void)
     }
     else
     {
-	strParams =  " -i \""+strParams+"\" "+g_ffmpegParams+" \\""+videoFile.c_str()+"\"";
+	strParams =  " -i \""+strParams+"\" "+g_ffmpegParams+" \""+videoFile.c_str()+"\"";
 	if (g_ffmpegPath.length()==0)
 	{
 	    XBMC->Log(LOG_ERROR,"Path to ffmpeg binary is not set. Please change addon configuration.");
