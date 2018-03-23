@@ -246,7 +246,7 @@ void *PVRRecorderThread::Process(void)
     }
     else
     {
-	strParams =  " -i \""+strParams+"\" "+g_ffmpegParams+" -f "+g_fileExtension+" -";
+	strParams =  " -i \""+strParams+"\" "+g_ffmpegParams+" \\""+videoFile.c_str()+"\"";
 	if (g_ffmpegPath.length()==0)
 	{
 	    XBMC->Log(LOG_ERROR,"Path to ffmpeg binary is not set. Please change addon configuration.");
@@ -369,7 +369,7 @@ void *PVRRecorderThread::Process(void)
 	    }
 	    else
 	    {
-		XBMC->DeleteFile(videoFile.c_str());
+		//XBMC->DeleteFile(videoFile.c_str());
 	    }
             entry.Status = PVR_STREAM_STOPPED;
             entry.Timer.state= PVR_TIMER_STATE_ERROR;
@@ -382,7 +382,7 @@ void *PVRRecorderThread::Process(void)
         {
 	    es.close();
 	    es.kill();
-            XBMC->CloseFile(fileHandle);
+            //XBMC->CloseFile(fileHandle);
                             
             XBMC->Log(LOG_NOTICE, "Recording stopped %s", entry.Timer.strTitle);
                    
@@ -394,7 +394,7 @@ void *PVRRecorderThread::Process(void)
 	    }
 	    else
 	    {
-		XBMC->DeleteFile(videoFile.c_str());
+		//XBMC->DeleteFile(videoFile.c_str());
 	    }
             entry.Status = PVR_STREAM_STOPPED;
             entry.Timer.state= PVR_TIMER_STATE_COMPLETED;
@@ -405,7 +405,7 @@ void *PVRRecorderThread::Process(void)
     }
     es.close();
     es.kill();
-    XBMC->CloseFile(fileHandle);
+    //XBMC->CloseFile(fileHandle);
     time_t end_time = time(NULL);
     //Correct duration time
     if (length>0)
@@ -416,7 +416,7 @@ void *PVRRecorderThread::Process(void)
     else
     {
 	//File is empty
-	XBMC->DeleteFile(videoFile.c_str());
+	//XBMC->DeleteFile(videoFile.c_str());
     }
     entry.Status = PVR_STREAM_STOPPED;
     entry.Timer.state= PVR_TIMER_STATE_COMPLETED;
