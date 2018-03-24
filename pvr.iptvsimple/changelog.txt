@@ -1,3 +1,6 @@
+v3.4.6
+-folder choose again
+
 v3.4.5
 - next try to fix recording 
 
